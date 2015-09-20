@@ -1,11 +1,9 @@
 <?php
 class DbConnection {
-
     $dsn = 'mysql:dbname=;host=localhost';
     $user = 'root';
     $password = '';
     $conn = NULL;
-
     function __construct() {
         $this->conn = new PDO($dsn, $user, $password);
     }
