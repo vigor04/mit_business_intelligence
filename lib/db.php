@@ -7,9 +7,11 @@ class DbConnection {
     $password = '';
     $conn = NULL;
 
+
     function __construct() {
         $this->conn = new PDO($dsn, $user, $password);
     }
+
 
     function execute($sql) {
         try {
