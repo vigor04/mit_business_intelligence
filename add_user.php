@@ -49,7 +49,7 @@ include("includes/sidebar.html");
 				<button class="btn btn-info btn-xs glyphicon glyphicon-trash"> </button>
 				</td>
 				<td>000002</td>
-				<td>Hideshi Taberu</td>
+				<td>Hideshi Ogoshi</td>
 				<td>Barangay Tanod</td>
 				</tr>
 				
