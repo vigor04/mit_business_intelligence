@@ -4,7 +4,6 @@ class DbConnection {
     $user = 'root';
     $password = '';
     $conn = NULL;
-
     function __construct() {
         $this->conn = new PDO($dsn, $user, $password);
     }
