@@ -1,6 +1,5 @@
 <?php
 class DbConnection {
-
     $dsn = 'mysql:dbname=;host=localhost';
     $user = 'root';
     $password = '';
