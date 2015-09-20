@@ -65,7 +65,7 @@ include("includes/sidebar.html");
 				<a class="btn btn-info btn-xs glyphicon glyphicon-pencil" href="registration_edit.php"> </a>
 				</td>
 				<td>000002</td>
-				<td>Hideshi Taberu</td>
+				<td>Hideshi Ogoshi</td>
 				<td>10/04/1993</td>
 				<td>22</td>
 				<td>Imus Cavite</td>
