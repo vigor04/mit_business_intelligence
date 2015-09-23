@@ -16,7 +16,7 @@ include("includes/sidebar.html");
                     </div>
                 </div>
                 <!-- /.row -->
-			<form role="form">
+			<form role="form" method="post" action="registration.php">
 			
 			<div class="panel panel-info">
 			  <div class="panel-heading">
