@@ -1,5 +1,3 @@
-CREATE DATABASE mitbi DEFAULT CHARSET=utf8;
-
 CREATE TABLE `barangays` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,

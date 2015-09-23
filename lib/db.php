@@ -1,27 +1,35 @@
 <?php
-class DbConnection {
-    $dsn = 'mysql:dbname=;host=localhost';
-    $user = 'root';
-    $password = '';
-    $conn = NULL;
-    function __construct() {
-        $this->conn = new PDO($dsn, $user, $password);
+class DbManager {
+    private function getPDO() {
+        static $pdo;
+        $dsn = 'mysql:host=localhost;dbname=mitbi;charset=utf8';
+        $user = 'root';
+        $password = '';
+        if (!isset($pdo)) {
+            $pdo = new PDO($dsn, $user, $password, array());
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        }
+        return $pdo;
     }
-    function execute($sql) {
+    function execute($sql, $param) {
+        $pdo = $this->getPDO();
         try {
-            $stmt = $dbh->prepare($sql);
-            $stmt->execute();
-            $result = [];
-            foreach ($stmt->fetch() as $row) {
-                $result[] = $row;
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($param);
+            if (strrpos(strtolower($sql), "select") === 0) {
+                $result = [];
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_LAST)) {
+                    $result[] = $row;
+                }
+                return $result;
+            } else {
+                return $pdo->lastInsertId('id');
             }
-            return $result;
         } catch (PDOException $e) {
             print('Error:'.$e->getMessage());
-            die();
         } finally {
             $stmt->closeCursor();
-            $this->conn = null;
+            $pdo = null;
         }
     }
 }
