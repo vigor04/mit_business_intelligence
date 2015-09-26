@@ -30,6 +30,5 @@ class DbManager {
             print('Error:'.$e->getMessage());
         }
         $stmt->closeCursor();
-        $pdo = null;
     }
 }
