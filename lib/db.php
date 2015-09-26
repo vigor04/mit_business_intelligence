@@ -17,7 +17,7 @@ class DbManager {
             $stmt = $pdo->prepare($sql);
             $stmt->execute($param);
             if (strrpos(strtolower($sql), "select") === 0) {
-                $result = [];
+                $result = array();
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_LAST)) {
                     $result[] = $row;
                 }
@@ -27,9 +27,7 @@ class DbManager {
             }
         } catch (PDOException $e) {
             print('Error:'.$e->getMessage());
-        } finally {
-            $stmt->closeCursor();
-            $pdo = null;
-        }
+        $stmt->closeCursor();
+        $pdo = null;
     }
 }
