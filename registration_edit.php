@@ -1,6 +1,13 @@
 <?php
 include("includes/header.html");
 include("includes/sidebar.html");
+require "lib/db.php";
+$db = new DbManager();
+if (!empty($_GET['id'])) {
+    $i = $db->execute("SELECT * FROM residents WHERE id = ?", array($_GET['id']));
+}
+$genders = $db->execute("SELECT id, name FROM genders ORDER BY id ASC", array());
+$martial_statuses = $db->execute("SELECT id, name FROM martial_statuses ORDER BY id ASC", array());
 ?>  
 
         <div id="page-wrapper">
@@ -16,8 +23,8 @@ include("includes/sidebar.html");
                     </div>
                 </div>
                 <!-- /.row -->
-			<form role="form">
-			
+			<form role="form" method="post" action="registration.php">
+            <input name="id" type="hidden" value="<?php echo $_GET['id'];?>"/>
 			<div class="panel panel-info">
 			  <div class="panel-heading">
 				<h3 class="panel-title">Personal Information</h3>
@@ -27,25 +34,25 @@ include("includes/sidebar.html");
 					 <div class="col-lg-3">
                             <div class="form-group">
                                 <label>First Name</label>
-                                <input required class="form-control" value="Catherine">
+                                <input name="first_name" required class="form-control" value="<?php echo $i[0]['first_name'];?>">
                             </div>
 					</div>
                     <div class="col-lg-3">
                             <div class="form-group">
                                 <label>Middle Name</label>
-                                <input class="form-control" value="Cajes">
+                                <input name="middle_name" class="form-control" value="<?php echo $i[0]['middle_name'];?>">
                             </div>
                     </div>
 					 <div class="col-lg-3">
                             <div class="form-group">
                                 <label>Last Name</label>
-                                <input required class="form-control" value="Adonis">
+                                <input name="last_name" required class="form-control" value="<?php echo $i[0]['last_name'];?>">
                             </div>
                     </div>
 					<div class="col-lg-3">
                             <div class="form-group">
                                 <label>Suffix</label>
-                                <input class="form-control" value="">
+                                <input name="suffix" class="form-control" value="<?php echo $i[0]['suffix'];?>">
                             </div>
                     </div>
                 </div>
@@ -54,31 +61,31 @@ include("includes/sidebar.html");
 					 <div class="col-lg-3">
                             <div class="form-group">
                                 <label>Address Line 1</label>
-                                <input required class="form-control" value="Imus Cavite">
+                                <input name="address_line_1" required class="form-control" value="<?php echo $i[0]['address_line_1'];?>">
                             </div>
 					</div>
 					 <div class="col-lg-3">
                             <div class="form-group">
                                 <label>Address Line 2</label>
-                                <input class="form-control" value="">
+                                <input name="address_line_2" class="form-control" value="<?php echo $i[0]['address_line_2'];?>">
                             </div>
 					</div>
 					 <div class="col-lg-2">
                             <div class="form-group">
                                 <label>Address Line 3</label>
-                                <input class="form-control" value="">
+                                <input name="address_line_3" class="form-control" value="<?php echo $i[0]['address_line_3'];?>">
                             </div>
 					</div>
 					 <div class="col-lg-2">
                             <div class="form-group">
                                 <label>Address Line 4</label>
-                                <input class="form-control" value="">
+                                <input name="address_line_4" class="form-control" value="<?php echo $i[0]['address_line_4'];?>">
                             </div>
 					</div>
 					 <div class="col-lg-2">
                             <div class="form-group">
                                 <label>Address Line 5</label>
-                                <input class="form-control" value="">
+                                <input name="address_line_5" class="form-control" value="<?php echo $i[0]['address_line_5'];?>">
                             </div>
 					</div>
                 </div>
@@ -88,33 +95,26 @@ include("includes/sidebar.html");
 					 <div class="col-lg-3">
                             <div class="form-group">
                                 <label>Gender</label>
-                                <select required class="form-control">
-								<option>Male</option>
-								<option selected>Female</option>
+                                <select name="gender" required class="form-control">
+<?php foreach($genders as $g): ?>
+		<option value="<?php echo $g['id'];?>" <?php if ($g['id'] == $i[0]['gender_id']) echo 'selected'; ?>><?php echo $g['name'];?></option>
+<?php endforeach; ?>
 								</select>
                             </div>
 					</div>
 					 <div class="col-lg-3">
                             <div class="form-group">
                                 <label>Birthdate</label>
-                                <input required type="date" value="12/14/1992" class="form-control">
-                            </div>
-					</div>
-					<div class="col-lg-3">
-                            <div class="form-group">
-                                <label>Age</label>
-                                <input min="0" max="99" required type="number" value="24" class="form-control">
+                                <input name="birth_date" required type="date" value="<?php echo $i[0]['birth_date'];?>" class="form-control">
                             </div>
 					</div>
 					<div class="col-lg-3">
                             <div class="form-group">
                                 <label>Marital Status</label>
-                                <select required class="form-control">
-								<option selected>Single</option>
-								<option>Married</option>
-								<option>Separated</option>
-								<option>Divorced</option>
-								<option>Widowed</option>
+                                <select name="martial_status" required class="form-control">
+<?php foreach($martial_statuses as $s): ?>
+		<option value="<?php echo $s['id'];?>" <?php if ($s['id'] == $i[0]['martial_status_id']) echo 'selected'; ?>><?php echo $s['name'];?></option>
+<?php endforeach; ?>
 								</select>
                             </div>
 					</div>
@@ -124,13 +124,13 @@ include("includes/sidebar.html");
 					<div class="col-lg-3">
                             <div class="form-group">
                                 <label>Citizenship</label>
-                                <input required class="form-control" value="Filipino">
+                                <input name="citizenship" required class="form-control" value="<?php echo $i[0]['citizenship'];?>">
                             </div>
 					</div>
 					<div class="col-lg-3">
                             <div class="form-group">
                                 <label>Contact Number</label>
-                                <input required class="form-control" value="09269145245">
+                                <input name="contact_number" required class="form-control" value="<?php echo $i[0]['contact_number'];?>">
                             </div>
 					</div>
                 </div>

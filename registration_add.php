@@ -1,6 +1,10 @@
 <?php
 include("includes/header.html");
 include("includes/sidebar.html");
+require "lib/db.php";
+$db = new DbManager();
+$genders = $db->execute("SELECT id, name FROM genders ORDER BY id ASC", array());
+$martial_statuses = $db->execute("SELECT id, name FROM martial_statuses ORDER BY id ASC", array());
 ?>  
 
         <div id="page-wrapper">
@@ -27,25 +31,25 @@ include("includes/sidebar.html");
 					 <div class="col-lg-3">
                             <div class="form-group">
                                 <label>First Name</label>
-                                <input required class="form-control" placeholder="First Name">
+                                <input name="first_name" required class="form-control" placeholder="First Name">
                             </div>
 					</div>
                     <div class="col-lg-3">
                             <div class="form-group">
                                 <label>Middle Name</label>
-                                <input class="form-control" placeholder="Middle Name">
+                                <input name="middle_name" class="form-control" placeholder="Middle Name">
                             </div>
                     </div>
 					 <div class="col-lg-3">
                             <div class="form-group">
                                 <label>Last Name</label>
-                                <input required class="form-control" placeholder="Last Name">
+                                <input name="last_name" required class="form-control" placeholder="Last Name">
                             </div>
                     </div>
 					<div class="col-lg-3">
                             <div class="form-group">
                                 <label>Suffix</label>
-                                <input class="form-control" placeholder="Suffix Name">
+                                <input name="suffix" class="form-control" placeholder="Suffix Name">
                             </div>
                     </div>
                 </div>
@@ -54,31 +58,31 @@ include("includes/sidebar.html");
 					 <div class="col-lg-3">
                             <div class="form-group">
                                 <label>Address Line 1</label>
-                                <input required class="form-control" placeholder="Address Line 1">
+                                <input name="address_line_1" required class="form-control" placeholder="Address Line 1">
                             </div>
 					</div>
 					 <div class="col-lg-3">
                             <div class="form-group">
                                 <label>Address Line 2</label>
-                                <input class="form-control" placeholder="Address Line 2">
+                                <input name="address_line_2" class="form-control" placeholder="Address Line 2">
                             </div>
 					</div>
 					 <div class="col-lg-2">
                             <div class="form-group">
                                 <label>Address Line 3</label>
-                                <input class="form-control" placeholder="Address Line 3">
+                                <input name="address_line_3" class="form-control" placeholder="Address Line 3">
                             </div>
 					</div>
 					 <div class="col-lg-2">
                             <div class="form-group">
                                 <label>Address Line 4</label>
-                                <input class="form-control" placeholder="Address Line 4">
+                                <input name="address_line_4" class="form-control" placeholder="Address Line 4">
                             </div>
 					</div>
 					 <div class="col-lg-2">
                             <div class="form-group">
                                 <label>Address Line 5</label>
-                                <input class="form-control" placeholder="Address Line 5">
+                                <input name="address_line_5" class="form-control" placeholder="Address Line 5">
                             </div>
 					</div>
                 </div>
@@ -88,33 +92,26 @@ include("includes/sidebar.html");
 					 <div class="col-lg-3">
                             <div class="form-group">
                                 <label>Gender</label>
-                                <select required class="form-control">
-								<option>Male</option>
-								<option>Female</option>
+                                <select name="gender" required class="form-control">
+<?php foreach($genders as $g): ?>
+		<option value="<?php echo $g['id'];?>" <?php if ($g['id'] == 1) echo 'selected'; ?>><?php echo $g['name'];?></option>
+<?php endforeach; ?>
 								</select>
                             </div>
 					</div>
 					 <div class="col-lg-3">
                             <div class="form-group">
                                 <label>Birthdate</label>
-                                <input required type="date" class="form-control">
-                            </div>
-					</div>
-					<div class="col-lg-3">
-                            <div class="form-group">
-                                <label>Age</label>
-                                <input min="0" max="99" required type="number" class="form-control">
+                                <input name="birth_date" required type="date" class="form-control">
                             </div>
 					</div>
 					<div class="col-lg-3">
                             <div class="form-group">
                                 <label>Marital Status</label>
-                                <select required class="form-control">
-								<option>Single</option>
-								<option>Married</option>
-								<option>Separated</option>
-								<option>Divorced</option>
-								<option>Widowed</option>
+                                <select name="martial_status" required class="form-control">
+<?php foreach($martial_statuses as $s): ?>
+		<option value="<?php echo $s['id'];?>" <?php if ($s['id'] == 1) echo 'selected'; ?>><?php echo $s['name'];?></option>
+<?php endforeach; ?>
 								</select>
                             </div>
 					</div>
@@ -124,13 +121,13 @@ include("includes/sidebar.html");
 					<div class="col-lg-3">
                             <div class="form-group">
                                 <label>Citizenship</label>
-                                <input required class="form-control" placeholder="Citizenship">
+                                <input name="citizenship" required class="form-control" placeholder="Citizenship">
                             </div>
 					</div>
 					<div class="col-lg-3">
                             <div class="form-group">
                                 <label>Contact Number</label>
-                                <input required class="form-control" placeholder="Contact Number">
+                                <input name="contact_number" required class="form-control" placeholder="Contact Number">
                             </div>
 					</div>
                 </div>

@@ -2,12 +2,29 @@
 include("includes/header.html");
 include("includes/sidebar.html");
 require "lib/db.php";
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+$page = 1;
+if ($_SERVER["REQUEST_METHOD"] == "POST" && empty($_POST['id'])) {
     $db = new DbManager();
     $db->execute(
-          "INSERT INTO residents (first_name, middle_name, last_name, suffix, address_line_1, address_line_2, address_line_3, address_line_4, address_line_5, gender_id, birth_date, martial_status_id, citizenship, contact_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
-        , array($_POST['first_name'], $_POST['middle_name'], $_POST['last_name'], $_POST['suffix'], $_POST['address_line_1'], $_POST['address_line_2'], $_POST['address_line_3'], $_POST['address_line_4'], $_POST['address_line_5'], $_POST['gender'], $_POST['birth_date'], $_POST['martial_status'], $_POST['citizenship'], $_POST['contact_number']));
+          "INSERT INTO residents (first_name, middle_name, last_name, suffix, address_line_1, address_line_2, address_line_3, address_line_4, address_line_5, gender_id, birth_date, martial_status_id, citizenship, contact_number, created_date_time, modified_date_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+        , array($_POST['first_name'], $_POST['middle_name'], $_POST['last_name'], $_POST['suffix'], $_POST['address_line_1'], $_POST['address_line_2'], $_POST['address_line_3'], $_POST['address_line_4'], $_POST['address_line_5'], $_POST['gender'], $_POST['birth_date'], $_POST['martial_status'], $_POST['citizenship'], $_POST['contact_number'], date('Y-m-d H:i:s'), date('Y-m-d H:i:s')));
+} else if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['id'])) {
+    $db = new DbManager();
+    $db->execute(
+          "UPDATE residents SET first_name = ?, middle_name = ?, last_name = ?, suffix = ?, address_line_1 = ?, address_line_2 = ?, address_line_3 = ?, address_line_4 = ?, address_line_5 = ?, gender_id = ?, birth_date = ?, martial_status_id = ?, citizenship = ?, contact_number = ?, modified_date_time = ? WHERE id = ?;"
+        , array($_POST['first_name'], $_POST['middle_name'], $_POST['last_name'], $_POST['suffix'], $_POST['address_line_1'], $_POST['address_line_2'], $_POST['address_line_3'], $_POST['address_line_4'], $_POST['address_line_5'], $_POST['gender'], $_POST['birth_date'], $_POST['martial_status'], $_POST['citizenship'], $_POST['contact_number'], date('Y-m-d H:i:s'), $_POST['id']));
+} else if ($_SERVER["REQUEST_METHOD"] == "GET" && !empty($_POST['words'])) {
+    var_dump("search");
+} else {
+    if(!empty($_GET['page'])) {
+        $page = (int) $_GET['page'];
+    }
 }
+$offset = ($page - 1) * 10;
+$db = new DbManager();
+$residents = $db->execute("SELECT id, CONCAT(first_name, ' ', IFNULL(middle_name, ''), ' ', last_name, ' ', IFNULL(suffix, '')) as full_name, birth_date, TIMESTAMPDIFF(YEAR,birth_date,CURDATE()) AS age, CONCAT(address_line_1, ' ', address_line_2, ' ', address_line_3, ' ', address_line_4, ' ', address_line_5) AS address FROM residents ORDER BY modified_date_time DESC LIMIT $offset, 10", array());
+$count = $db->execute("SELECT COUNT(1) AS c FROM residents", array());
+$number_of_pages = (int) ceil($count[0]['c'] / 10);
 ?>
 
         <div id="page-wrapper">
@@ -24,19 +41,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <!-- /.row -->
 				
-		<div class="row">	
-			<div class="col-lg-4">
-			<div class="input-group">
-			  <input type="text" class="form-control" placeholder="Search for...">
-			  <span class="input-group-btn">
-				<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span> Search</button>
-			  </span>
-			</div><!-- /input-group -->
-		  </div><!-- /.col-lg-6 -->
-		</div><!-- /.row -->
+		<form role="form" id="search_form">
+		  <div class="row">	
+			  <div class="col-lg-4">
+			  <div class="input-group">
+			    <input id="words" type="text" name="words" class="form-control" placeholder="Search for...">
+			    <span class="input-group-btn">
+				  <button id="search_button" class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span> Search</button>
+			    </span>
+			  </div><!-- /input-group -->
+		    </div><!-- /.col-lg-6 -->
+		  </div><!-- /.row -->
+		</form>
 			<br>
 			<form role="form">
-			
 			<div class="panel panel-info">
 			  <div class="panel-heading">
 			  <a href="registration_add.php" class="btn btn-xs btn-primary" style="float:right"><span class=" glyphicon glyphicon-plus"></span> Add New</a>
@@ -53,79 +71,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 				<th>Age</th>
 				<th>Address</th>
 				</tr>
-				
+<?php foreach($residents as $i): ?>
 				<tr>
 				<td>
-				<a class="btn btn-info btn-xs glyphicon glyphicon-search" href="registration_view.php"> </a> &nbsp;
-				<a class="btn btn-info btn-xs glyphicon glyphicon-pencil" href="registration_edit.php"> </a>
+				<a class="btn btn-info btn-xs glyphicon glyphicon-search" href="registration_view.php?id=<?php echo $i['id'];?>"> </a> &nbsp;
+				<a class="btn btn-info btn-xs glyphicon glyphicon-pencil" href="registration_edit.php?id=<?php echo $i['id'];?>"> </a>
 				</td>
-				<td>000001</td>
-				<td>Catherine Adonis</td>
-				<td>12/04/1992</td>
-				<td>24</td>
-				<td>Imus Cavite</td>
+				<td><?php echo $i['id'];?></td>
+				<td><?php echo $i['full_name'];?></td>
+				<td><?php echo $i['birth_date'];?></td>
+				<td><?php echo $i['age'];?></td>
+				<td><?php echo $i['address'];?></td>
 				</tr>
-				
-				<tr>
-				<td>
-				<a class="btn btn-info btn-xs glyphicon glyphicon-search" href="registration_view.php"> </a> &nbsp;
-				<a class="btn btn-info btn-xs glyphicon glyphicon-pencil" href="registration_edit.php"> </a>
-				</td>
-				<td>000002</td>
-				<td>Hideshi Ogoshi</td>
-				<td>10/04/1993</td>
-				<td>22</td>
-				<td>Imus Cavite</td>
-				</tr>
-				
-				<tr>
-				<td>
-				<a class="btn btn-info btn-xs glyphicon glyphicon-search" href="registration_view.php"> </a> &nbsp;
-				<a class="btn btn-info btn-xs glyphicon glyphicon-pencil" href="registration_edit.php"> </a>
-				</td>
-				<td>000003</td>
-				<td>Francis Vigor De Ocampo</td>
-				<td>10/04/1993</td>
-				<td>22</td>
-				<td>Imus Cavite</td>
-				</tr>
-				
-				<tr>
-				<td>
-				<a class="btn btn-info btn-xs glyphicon glyphicon-search" href="registration_view.php"> </a> &nbsp;
-				<a class="btn btn-info btn-xs glyphicon glyphicon-pencil" href="registration_edit.php"> </a>
-				</td>
-				<td>000004</td>
-				<td>Rose Ann Assuncion</td>
-				<td>10/04/1993</td>
-				<td>22</td>
-				<td>Imus Cavite</td>
-				</tr>
-				
-				<tr>
-				<td>
-				<a class="btn btn-info btn-xs glyphicon glyphicon-search" href="registration_view.php"> </a> &nbsp;
-				<a class="btn btn-info btn-xs glyphicon glyphicon-pencil" href="registration_edit.php"> </a>
-				</td>
-				<td>000004</td>
-				<td>Ejay Reyes</td>
-				<td>10/04/1993</td>
-				<td>22</td>
-				<td>Imus Cavite</td>
-				</tr>
-				
-				<tr>
-				<td>
-				<a class="btn btn-info btn-xs glyphicon glyphicon-search" href="registration_view.php"> </a> &nbsp;
-				<a class="btn btn-info btn-xs glyphicon glyphicon-pencil" href="registration_edit.php"> </a>
-				</td>
-				<td>000004</td>
-				<td>Bin Cui</td>
-				<td>10/04/1993</td>
-				<td>22</td>
-				<td>Imus Cavite</td>
-				</tr>
-				
+<?php endforeach; ?>
 				</table>
 				
 			  </div>
@@ -136,19 +94,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			<nav>
 			  <ul class="pagination">
 				<li>
-				  <a href="#" aria-label="Previous">
+<?php if($page !== 1): ?>
+				  <a href="registration.php?page=<?php echo ($page - 1);?>">
 					<span aria-hidden="true">&laquo;</span>
 				  </a>
+<?php else: ?>
+				  <span aria-hidden="true">&laquo;</span>
+<?php endif; ?>
 				</li>
-				<li><a href="#">1</a></li>
-				<li><a href="#">2</a></li>
-				<li><a href="#">3</a></li>
-				<li><a href="#">4</a></li>
-				<li><a href="#">5</a></li>
+<?php for($i = 1; $i <= $number_of_pages; $i++): ?>
+				<li><a href="registration.php?page=<?php echo $i;?>"><?php echo $i;?></a></li>
+<?php endfor; ?>
 				<li>
-				  <a href="#" aria-label="Next">
+<?php if($page !== $number_of_pages): ?>
+				  <a href="registration.php?page=<?php echo ($page + 1);?>">
 					<span aria-hidden="true">&raquo;</span>
 				  </a>
+<?php else: ?>
+				  <span aria-hidden="true">&raquo;</span>
+<?php endif; ?>
 				</li>
 			  </ul>
 			</nav>
@@ -172,6 +136,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
 
+<script>
+jQuery(function($){
+    $('#search_button').click(function(event) {
+        var words = $('#words').val();
+        window.location.href = "registration.php?words=" + words;
+    });
+});
+</script>
 </body>
-
 </html>
