@@ -1,10 +1,11 @@
 <?php
+require $_SERVER['DOCUMENT_ROOT'] . "/config/db_config.php";
 class DbManager {
     private function getPDO() {
         static $pdo;
-        $dsn = 'mysql:host=localhost;dbname=mitbi;charset=utf8';
-        $user = 'root';
-        $password = '';
+        global $dsn;
+        global $user;
+        global $password;
         if (!isset($pdo)) {
             $pdo = new PDO($dsn, $user, $password, array());
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

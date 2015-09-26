@@ -1,7 +1,6 @@
 <?php
 require "../lib/db.php";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $pathinfo = pathinfo($_FILES['image']);
     if($_FILES['image']['type'] === 'image/jpeg') {
         $ext = '.jpg';
     } else if($_FILES['image']['type'] === 'image/png') {
