@@ -27,6 +27,7 @@ class DbManager {
             }
         } catch (PDOException $e) {
             print('Error:'.$e->getMessage());
+        }
         $stmt->closeCursor();
         $pdo = null;
     }
