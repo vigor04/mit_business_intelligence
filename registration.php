@@ -1,7 +1,14 @@
 <?php
 include("includes/header.html");
 include("includes/sidebar.html");
-?>  
+require "lib/db.php";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $db = new DbManager();
+    $db->execute(
+          "INSERT INTO residents (first_name, middle_name, last_name, suffix, address_line_1, address_line_2, address_line_3, address_line_4, address_line_5, gender_id, birth_date, martial_status_id, citizenship, contact_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+        , array($_POST['first_name'], $_POST['middle_name'], $_POST['last_name'], $_POST['suffix'], $_POST['address_line_1'], $_POST['address_line_2'], $_POST['address_line_3'], $_POST['address_line_4'], $_POST['address_line_5'], $_POST['gender'], $_POST['birth_date'], $_POST['martial_status'], $_POST['citizenship'], $_POST['contact_number']));
+}
+?>
 
         <div id="page-wrapper">
 
