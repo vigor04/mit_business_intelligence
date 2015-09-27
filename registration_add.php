@@ -2,6 +2,7 @@
 include("includes/header.html");
 include("includes/sidebar.html");
 require "lib/db.php";
+require "lib/util.php";
 $db = new DbManager();
 $genders = $db->execute("SELECT id, name FROM genders ORDER BY id ASC", array());
 $martial_statuses = $db->execute("SELECT id, name FROM martial_statuses ORDER BY id ASC", array());
@@ -94,7 +95,7 @@ $martial_statuses = $db->execute("SELECT id, name FROM martial_statuses ORDER BY
                                 <label>Gender</label>
                                 <select name="gender" required class="form-control">
 <?php foreach($genders as $g): ?>
-		<option value="<?php echo $g['id'];?>" <?php if ($g['id'] == 1) echo 'selected'; ?>><?php echo $g['name'];?></option>
+		<option value="<?php echo $g['id'];?>" <?php if ($g['id'] == 1) echo 'selected'; ?>><?php h($g['name']);?></option>
 <?php endforeach; ?>
 								</select>
                             </div>
@@ -110,7 +111,7 @@ $martial_statuses = $db->execute("SELECT id, name FROM martial_statuses ORDER BY
                                 <label>Marital Status</label>
                                 <select name="martial_status" required class="form-control">
 <?php foreach($martial_statuses as $s): ?>
-		<option value="<?php echo $s['id'];?>" <?php if ($s['id'] == 1) echo 'selected'; ?>><?php echo $s['name'];?></option>
+		<option value="<?php echo $s['id'];?>" <?php if ($s['id'] == 1) echo 'selected'; ?>><?php h($s['name']);?></option>
 <?php endforeach; ?>
 								</select>
                             </div>

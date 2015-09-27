@@ -2,6 +2,7 @@
 include("includes/header.html");
 include("includes/sidebar.html");
 require "lib/db.php";
+require "lib/util.php";
 $page = 1;
 $condition = "";
 $param = array();
@@ -51,7 +52,7 @@ $number_of_pages = (int) ceil($count[0]['c'] / 10);
 		  <div class="row">	
 			  <div class="col-lg-4">
 			  <div class="input-group">
-			    <input id="words" type="text" name="words" value="<?php if (!empty($word)) echo $word;?>" class="form-control" placeholder="Search for...">
+			    <input id="words" type="text" name="words" value="<?php if (!empty($word)) h($word);?>" class="form-control" placeholder="Search for...">
 			    <span class="input-group-btn">
 				  <button id="search_button" class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span> Search</button>
 			    </span>
@@ -84,10 +85,10 @@ $number_of_pages = (int) ceil($count[0]['c'] / 10);
 				<a class="btn btn-info btn-xs glyphicon glyphicon-pencil" href="registration_edit.php?id=<?php echo $i['id'];?>"> </a>
 				</td>
 				<td><?php echo $i['id'];?></td>
-				<td><?php echo $i['full_name'];?></td>
-				<td><?php echo $i['birth_date'];?></td>
+				<td><?php h($i['full_name']);?></td>
+				<td><?php h($i['birth_date']);?></td>
 				<td><?php echo $i['age'];?></td>
-				<td><?php echo $i['address'];?></td>
+				<td><?php h($i['address']);?></td>
 				</tr>
 <?php endforeach; ?>
 				</table>
