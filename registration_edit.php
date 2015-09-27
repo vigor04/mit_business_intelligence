@@ -141,7 +141,7 @@ $martial_statuses = $db->execute("SELECT id, name FROM martial_statuses ORDER BY
 			</div>
 			
               <center>
-			 <button class="btn btn-success btn-xs">Save</button> <a href="registration.php" class="btn btn-default btn-xs">Cancel</a> <br><br>
+			 <button onclick="myConfirm()" class="btn btn-success btn-xs">Save</button> <a href="registration.php" class="btn btn-default btn-xs">Cancel</a> <br><br>
 			  </center>
 				
 			</form>
@@ -161,6 +161,12 @@ $martial_statuses = $db->execute("SELECT id, name FROM martial_statuses ORDER BY
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
+
+<script>
+function myConfirm() {
+    confirm("Are you sure you want to save?");
+}
+</script>
 
 </body>
 
