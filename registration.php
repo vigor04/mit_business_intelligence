@@ -3,6 +3,8 @@ include("includes/header.html");
 include("includes/sidebar.html");
 require "lib/db.php";
 $page = 1;
+$condition = "";
+$param = array();
 if ($_SERVER["REQUEST_METHOD"] == "POST" && empty($_POST['id'])) {
     $db = new DbManager();
     $db->execute(
@@ -13,17 +15,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && empty($_POST['id'])) {
     $db->execute(
           "UPDATE residents SET first_name = ?, middle_name = ?, last_name = ?, suffix = ?, address_line_1 = ?, address_line_2 = ?, address_line_3 = ?, address_line_4 = ?, address_line_5 = ?, gender_id = ?, birth_date = ?, martial_status_id = ?, citizenship = ?, contact_number = ?, modified_date_time = ? WHERE id = ?;"
         , array($_POST['first_name'], $_POST['middle_name'], $_POST['last_name'], $_POST['suffix'], $_POST['address_line_1'], $_POST['address_line_2'], $_POST['address_line_3'], $_POST['address_line_4'], $_POST['address_line_5'], $_POST['gender'], $_POST['birth_date'], $_POST['martial_status'], $_POST['citizenship'], $_POST['contact_number'], date('Y-m-d H:i:s'), $_POST['id']));
-} else if ($_SERVER["REQUEST_METHOD"] == "GET" && !empty($_POST['words'])) {
-    var_dump("search");
+} else if ($_SERVER["REQUEST_METHOD"] == "GET" && !empty($_GET['words'])) {
+    $condition = "WHERE first_name LIKE ? OR middle_name LIKE ? OR last_name LIKE ? OR suffix LIKE ? OR address_line_1 LIKE ? OR address_line_2 LIKE ? OR address_line_3 LIKE ? OR address_line_4 LIKE ? OR address_line_5 LIKE ? OR citizenship LIKE ?";
+    $words = preg_split('/[\s]+/', $_GET['words'], -1, PREG_SPLIT_NO_EMPTY);
+    $word = $words[0];
+    $param = array('%'.$word.'%', '%'.$word.'%', '%'.$word.'%', '%'.$word.'%', '%'.$word.'%', '%'.$word.'%', '%'.$word.'%', '%'.$word.'%', '%'.$word.'%', '%'.$word.'%');
 } else {
     if(!empty($_GET['page'])) {
         $page = (int) $_GET['page'];
     }
 }
-$offset = ($page - 1) * 10;
 $db = new DbManager();
-$residents = $db->execute("SELECT id, CONCAT(first_name, ' ', IFNULL(middle_name, ''), ' ', last_name, ' ', IFNULL(suffix, '')) as full_name, birth_date, TIMESTAMPDIFF(YEAR,birth_date,CURDATE()) AS age, CONCAT(address_line_1, ' ', address_line_2, ' ', address_line_3, ' ', address_line_4, ' ', address_line_5) AS address FROM residents ORDER BY modified_date_time DESC LIMIT $offset, 10", array());
-$count = $db->execute("SELECT COUNT(1) AS c FROM residents", array());
+$offset = ($page - 1) * 10;
+$sql = "SELECT id, CONCAT(first_name, ' ', IFNULL(middle_name, ''), ' ', last_name, ' ', IFNULL(suffix, '')) as full_name, birth_date, TIMESTAMPDIFF(YEAR,birth_date,CURDATE()) AS age, CONCAT(address_line_1, ' ', address_line_2, ' ', address_line_3, ' ', address_line_4, ' ', address_line_5) AS address FROM residents $condition ORDER BY modified_date_time DESC LIMIT $offset, 10;";
+$residents = $db->execute($sql, $param);
+$count = $db->execute("SELECT COUNT(1) AS c FROM residents $condition ;", $param);
 $number_of_pages = (int) ceil($count[0]['c'] / 10);
 ?>
 
@@ -45,7 +51,7 @@ $number_of_pages = (int) ceil($count[0]['c'] / 10);
 		  <div class="row">	
 			  <div class="col-lg-4">
 			  <div class="input-group">
-			    <input id="words" type="text" name="words" class="form-control" placeholder="Search for...">
+			    <input id="words" type="text" name="words" value="<?php if (!empty($word)) echo $word;?>" class="form-control" placeholder="Search for...">
 			    <span class="input-group-btn">
 				  <button id="search_button" class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span> Search</button>
 			    </span>
